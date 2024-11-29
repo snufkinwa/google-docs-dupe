@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "vue-clerk";
+import { Earth, ChevronDown } from "lucide-vue-next";
 import Quill from "quill";
 import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
@@ -57,7 +59,23 @@ onMounted(() => {
           </div>
         </div>
       </div>
-      <button class="share-button">Share</button>
+      <div class="right-section">
+        <button class="request-access">Request edit access</button>
+        <button class="share-button">
+          <Earth class="icon" size="16" />
+          Share
+          <span class="divider"></span>
+          <ChevronDown class="icon" size="16" />
+        </button>
+        <SignedOut>
+          <SignInButton v-slot="props" as-child>
+            <button v-bind="props" class="sign-in">Sign in</button>
+          </SignInButton>
+        </SignedOut>
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
+      </div>
     </div>
 
     <!-- Formatting Toolbar -->
@@ -106,7 +124,6 @@ onMounted(() => {
   justify-content: space-between;
   align-items: flex-start;
   padding: 4px 8px;
-  background-color: white;
   height: 68px;
 }
 
@@ -114,17 +131,22 @@ onMounted(() => {
   display: flex;
   align-items: flex-start;
   gap: 8px;
+  position: relative;
 }
 
 .title-menu {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  position: relative;
+  z-index: 2;
 }
 
 .menu-bar {
   display: flex;
   gap: 4px;
+  position: relative;
+  z-index: 2;
 }
 
 .menu-bar button {
@@ -162,42 +184,115 @@ onMounted(() => {
   width: 850px;
   background: white;
   min-height: 1100px;
-  padding: 72px 96px; /* Adjusted padding to match Google Docs */
+  padding: 72px 96px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-  margin-top: 20px; /* Added margin to match screenshot */
+  margin-top: 20px;
 }
 
 .document-title {
   font-size: 18px;
   border: none;
+  background-color: #fbfbfb;
   padding: 2px 6px;
   border-radius: 4px;
   margin-bottom: 2px;
+  position: relative;
+  z-index: 3;
 }
 
 .document-title:hover {
   background-color: #f1f3f4;
+  border: 1px #001d35 solid;
+  margin-bottom: 0;
 }
 
 .logo {
   width: 40px;
   height: 40px;
-  margin-right: 8px;
+  margin-right: 4px;
+}
+
+.right-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  height: 48px;
+  padding-right: 8px;
+}
+
+.request-access {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f8f9fa;
+  color: #1a73e8;
+  border: 1px solid #dadce0;
+  border-radius: 100px;
+  padding: 8px 24px;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 36px;
+  transition: background-color 0.2s;
+}
+
+.request-access:hover {
+  background-color: #f1f3f4;
 }
 
 .share-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
   background-color: #c2e7ff;
   color: #001d35;
   border: none;
-  padding: 8px 24px;
-  border-radius: 20px; /* More rounded corners */
+  padding: 0px 14px;
+  border-radius: 20px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: inherit;
   font-weight: 500;
+  box-shadow: none;
+  transition: background-color 0.2s ease;
 }
 
 .share-button:hover {
   background-color: #b3d7ee;
+}
+
+.share-button:active {
+  background-color: #a5c8e0;
+}
+
+.share-button .icon {
+  display: flex;
+  color: #001d35;
+}
+
+.share-button .icon:first-child {
+  margin-right: 4px;
+}
+
+.share-button .divider {
+  width: 1px;
+  height: 35px;
+  background-color: white;
+  margin: 0px 6px;
+}
+
+.sign-in {
+  background-color: transparent;
+  border: none;
+  margin: 0;
+  padding: 0;
+  text-align: inherit;
+  font: inherit;
+  border-radius: 0;
+  appearance: none;
 }
 
 :deep(.ql-container) {
