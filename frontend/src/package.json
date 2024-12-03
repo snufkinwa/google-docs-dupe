@@ -9,6 +9,7 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "^1.6.1",
+    "@nuxtjs/google-fonts": "^3.2.0",
     "nuxt": "^3.14.1592",
     "sass": "^1.81.0",
     "vite-plugin-node-stdlib-browser": "^0.2.1"

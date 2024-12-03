@@ -2,4 +2,4 @@
 
 Rust backend Websockets, LRU Cache and MongoDB
 
-Modifying Taleweaver @yuzhenmi and Nuxtjs exmple @JacobGardos
+Modifying Taleweaver @yuzhenmi and Nuxt 3 example @JacobGardos

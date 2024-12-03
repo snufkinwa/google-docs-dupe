@@ -4,15 +4,10 @@ import nodePolyfills from "vite-plugin-node-stdlib-browser";
 export default defineNuxtConfig({
   vite: {
     plugins: [nodePolyfills()],
-    app: {
-      head: {
-        link: [{ rel: "icon", type: "image/ico", href: "/favicon.ico" }],
-      },
-    },
     css: {
       preprocessorOptions: {
         sass: {
-          additionalData: '@import "@/assets/style/global.sass"',
+          additionalData: '@import "~/assets/styles/_shared.sass"',
         },
       },
     },
@@ -20,8 +15,21 @@ export default defineNuxtConfig({
       include: ["@taleweaver/core"],
     },
   },
+  css: ["~/assets/styles/global.scss"],
+  app: {
+    head: {
+      link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
+    },
+  },
   compatibilityDate: "2024-12-01",
-  modules: ["@nuxt/devtools"],
+  modules: ["@nuxt/devtools", "@clerk/nuxt", "@nuxtjs/google-fonts"],
+  googleFonts: {
+    families: {
+      "Open+Sans": [400, 500],
+    },
+    preload: true,
+    download: true,
+  },
   // sourcemap: {
   //   server: true,
   //   client: true,

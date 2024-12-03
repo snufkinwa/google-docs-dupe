@@ -1,0 +1,42 @@
+// Variables
+$color-primary: #1a73e8;
+$color-primary-dark: #1557b0;
+$color-text: #202124;
+$color-text-secondary: #5f6368;
+$color-border: #dadce0;
+$color-background: #f8f9fa;
+
+// Mixins
+@mixin button-base {
+  font-size: 0.975rem;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+@mixin button-primary {
+  @include button-base;
+  background: $color-primary;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+
+  &:hover {
+    background: $color-primary-dark;
+  }
+}
+
+@mixin button-secondary {
+  @include button-base;
+  background: transparent;
+  border: 1px solid $color-border;
+  padding: 0px 6px 0px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  &:hover {
+    background: $color-background;
+  }
+}

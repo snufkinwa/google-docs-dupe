@@ -34,7 +34,7 @@
 <script lang="ts">
 import type { IConfig } from "@taleweaver/core";
 import type { IResolvedFont } from "@taleweaver/core/dist/tw/render/service";
-import sample from "../editor/littleRedRidingHood";
+import sample from "../../editor/littleRedRidingHood";
 
 export default defineComponent({
   mounted() {
