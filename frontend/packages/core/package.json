@@ -12,10 +12,9 @@
         "@types/jest": "^24.0.23",
         "@types/jsdom": "^12.2.4",
         "@types/node": "17.0.41",
-        "jest": "^24.9.0",
-        "jsdom": "^15.2.1",
-        "ts-jest": "^24.1.0",
+        "jest": "^29.7.0",
+        "jsdom": "^25.0.1",
+        "ts-jest": "^29.2.5",
         "typescript": "^3.9.3"
-    },
-    "dependencies": {}
+    }
 }

@@ -3,7 +3,7 @@
     <div class="hero__content">
       <div class="hero__left">
         <div class="hero__product">
-          <img src="../assets/docs.png" alt="Docuvy" class="hero__icon" />
+          <img src="~/assets/DOCUVY.svg" alt="Docuvy" class="hero__icon" />
           <h2 class="hero__product-name">Docuvy</h2>
         </div>
         <h1 class="hero__title">Online, collaborative documents</h1>
@@ -26,14 +26,47 @@
           </button>
         </div>
       </div>
-      <div class="hero__right"></div>
+      <div class="hero__right">
+        <img src="../../assets/HeroSection_Right.png" class="image-right" />
+      </div>
     </div>
-    <HeroTabs />
+    <HeroTabs @tab-change="handleTabChange" />
+
+    <div class="hero__sections">
+      <section
+        v-for="section in sections"
+        :key="section.id"
+        :id="section.id"
+        class="hero__section"
+      >
+        <component :is="section.component" />
+      </section>
+    </div>
   </div>
 </template>
 
+<script setup>
+import { ref } from "vue";
+import HeroTabs from "./heroTabs.vue";
+import createSection from "./sections/createSection.vue";
+import collaborateSection from "./sections/collaborateSection.vue";
+import FAQSection from "./sections/FAQSection.vue";
+
+const currentSection = ref("create");
+
+const sections = [
+  { id: "create", component: createSection },
+  { id: "collaborate", component: collaborateSection },
+  { id: "faqs", component: FAQSection },
+];
+
+const handleTabChange = (sectionId) => {
+  currentSection.value = sectionId;
+};
+</script>
+
 <style lang="scss" scoped>
-@import "../assets/styles/shared";
+@use "~/assets/styles/_shared" as shared;
 
 .hero {
   min-height: 100vh;
@@ -61,20 +94,20 @@
   }
 
   &__icon {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
   }
 
   &__product-name {
     font-size: 1.125rem;
-    color: $color-text;
+    color: shared.$color-text;
     font-weight: 500;
   }
 
   &__title {
     font-size: 3rem;
     line-height: 1.2;
-    color: $color-text;
+    color: shared.$color-text;
     font-weight: 600;
     margin-bottom: 24px;
   }
@@ -82,7 +115,7 @@
   &__description {
     font-size: 1.125rem;
     line-height: 1.5;
-    color: $color-text-secondary;
+    color: shared.$color-text-secondary;
     margin-bottom: 32px;
   }
 
@@ -92,12 +125,27 @@
   }
 
   &__sign-in {
-    @include button-primary;
+    @include shared.button-primary;
   }
 
   &__try-free {
-    @include button-secondary;
-    color: $color-primary;
+    @include shared.button-secondary;
+    color: shared.$color-primary;
+    font-weight: 500;
+  }
+
+  .image-right {
+    width: 500px;
+    height: auto;
+  }
+
+  &__sections {
+    margin-top: 48px;
+  }
+
+  &__section {
+    min-height: 500px;
+    scroll-margin-top: 100px;
   }
 }
 </style>

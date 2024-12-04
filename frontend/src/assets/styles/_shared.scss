@@ -39,4 +39,10 @@ $color-background: #f8f9fa;
   &:hover {
     background: $color-background;
   }
+
+  .divider {
+    width: 1px;
+    height: 44px;
+    background-color: $color-border;
+  }
 }

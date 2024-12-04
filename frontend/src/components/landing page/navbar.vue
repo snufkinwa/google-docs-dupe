@@ -34,15 +34,15 @@
 const links = ["Solutions", "Products", "AI", "Pricing"];
 </script>
 
-<style lang="scss" scoped>
-@import "../assets/styles/shared";
+<style lang="scss">
+@use "~/assets/styles/_shared.scss" as shared;
 
 .nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 12px 24px;
-  border-bottom: 1px solid $color-border;
+  border-bottom: 1px solid shared.$color-border;
 
   &__left {
     display: flex;
@@ -52,7 +52,7 @@ const links = ["Solutions", "Products", "AI", "Pricing"];
 
   &__brand {
     font-size: 1.2rem;
-    color: $color-text-secondary;
+    color: shared.$color-text-secondary;
   }
 
   &__center {
@@ -61,12 +61,12 @@ const links = ["Solutions", "Products", "AI", "Pricing"];
   }
 
   &__link {
-    color: $color-text-secondary;
+    color: shared.$color-text-secondary;
     text-decoration: none;
     font-size: 0.875rem;
 
     &:hover {
-      color: $color-text;
+      color: shared.$color-text;
     }
   }
 
@@ -77,12 +77,17 @@ const links = ["Solutions", "Products", "AI", "Pricing"];
   }
 
   &__try-free {
-    @include button-secondary;
-    color: $color-text-secondary;
+    @include shared.button-secondary;
+    color: shared.$color-text-secondary;
+
+    .divider {
+      width: 1px;
+      height: 36px;
+    }
   }
 
   &__sign-in {
-    @include button-primary;
+    @include shared.button-primary;
     padding: 8px 16px;
   }
 }

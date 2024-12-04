@@ -6,8 +6,8 @@
         v-for="(faq, index) in faqs"
         :key="index"
         class="faq__item"
-        :open="openIndex === index"
-        @toggle="toggleFAQ(index)"
+        :open="openStates[index]"
+        @toggle="toggleFAQ(index, $event)"
       >
         <summary>{{ faq.question }}</summary>
         <p v-html="faq.answer"></p>
@@ -19,12 +19,6 @@
 <script setup>
 import { ref } from "vue";
 
-const openIndex = ref(null);
-
-const toggleFAQ = (index) => {
-  openIndex.value = openIndex.value === index ? null : index;
-};
-
 const faqs = [
   {
     question: "How was this site built?",
@@ -32,9 +26,10 @@ const faqs = [
       "This site was built using Nuxt 3, featuring modern web technologies including Vue.js and SCSS for styling. It implements Clerk for authentication and uses a Rust backend for data management.",
   },
   {
-    question: "What technologies are used?",
+    question:
+      "What external tools or libraries were used in building this site?",
     answer:
-      "Frontend: Nuxt 3, Vue.js, SCSS<br>Backend: Rust<br>Authentication: Clerk<br>Database: MongoDB",
+      "This project incorporates open-source code licensed under MIT, including a layout engine used to enhance the collaborative document experience. We deeply value the contributions of the open-source community in making projects like this possible.",
   },
   {
     question: "Is this open source?",
@@ -42,10 +37,17 @@ const faqs = [
       "Yes, this project is open source and available on GitHub. You can contribute to its development or use it as a reference for your own projects.",
   },
 ];
+
+const openStates = ref(new Array(faqs.length).fill(false));
+
+const toggleFAQ = (index, event) => {
+  const details = event.target;
+  openStates.value[index] = details.open;
+};
 </script>
 
 <style lang="scss" scoped>
-@import "../assets/styles/shared";
+@use "~/assets/styles/_shared" as shared;
 
 .faq {
   padding: 80px 24px;
@@ -54,7 +56,7 @@ const faqs = [
 
   &__title {
     font-size: 2.5rem;
-    color: $color-text;
+    color: shared.$color-text;
     text-align: center;
     margin-bottom: 48px;
     font-weight: 400;
@@ -66,7 +68,7 @@ const faqs = [
   }
 
   &__item {
-    border: 1px solid $color-border;
+    border: 1px solid shared.$color-border;
     border-radius: 8px;
     overflow: hidden;
 
@@ -74,7 +76,7 @@ const faqs = [
       padding: 24px;
       cursor: pointer;
       font-weight: 500;
-      color: $color-text;
+      color: shared.$color-text;
       position: relative;
       list-style: none;
 
@@ -86,17 +88,19 @@ const faqs = [
         content: "+";
         position: absolute;
         right: 24px;
-        transition: transform 0.2s;
+        transition: transform 0.3s ease;
       }
     }
 
-    &[open] summary:after {
-      content: "-";
+    &[open] {
+      summary:after {
+        content: "-";
+      }
     }
 
     p {
       padding: 0 24px 24px;
-      color: $color-text-secondary;
+      color: shared.$color-text-secondary;
       line-height: 1.5;
     }
   }

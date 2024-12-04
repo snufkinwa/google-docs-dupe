@@ -58,21 +58,18 @@ const sections = [
 ];
 
 const socials = [
-  { name: "X/Twitter", icon: "heroicons:x-mark", url: "#" },
-  { name: "YouTube", icon: "heroicons:play", url: "#" },
-  { name: "LinkedIn", icon: "heroicons:linkedin", url: "#" },
-  { name: "Instagram", icon: "heroicons:camera", url: "#" },
-  { name: "Facebook", icon: "heroicons:facebook", url: "#" },
-  { name: "TikTok", icon: "heroicons:musical-note", url: "#" },
+  { name: "X/Twitter", icon: "line-md:twitter-x", url: "#" },
+  { name: "LinkedIn", icon: "uiw:linkedin", url: "#" },
+  { name: "Github", icon: "uiw:github", url: "#" },
 ];
 </script>
 
 <style lang="scss" scoped>
-@import "../assets/styles/shared";
+@use "~/assets/styles/_shared" as shared;
 
 .footer {
   background: #fff;
-  border-top: 1px solid $color-border;
+  border-top: 1px solid shared.$color-border;
   padding: 48px 24px 24px;
 
   &__content {
@@ -90,18 +87,18 @@ const socials = [
 
     h3 {
       font-size: 1rem;
-      color: $color-text;
+      color: shared.$color-text;
       font-weight: 500;
       margin-bottom: 8px;
     }
 
     a {
-      color: $color-text-secondary;
+      color: shared.$color-text-secondary;
       text-decoration: none;
       font-size: 0.875rem;
 
       &:hover {
-        color: $color-text;
+        color: shared.$color-text;
       }
     }
   }
@@ -115,11 +112,11 @@ const socials = [
   }
 
   &__social-link {
-    color: $color-text-secondary;
+    color: shared.$color-text-secondary;
     transition: color 0.2s;
 
     &:hover {
-      color: $color-text;
+      color: shared.$color-text;
     }
   }
 
@@ -131,9 +128,9 @@ const socials = [
   &__bottom {
     margin-top: 48px;
     padding-top: 24px;
-    border-top: 1px solid $color-border;
+    border-top: 1px solid shared.$color-border;
     text-align: center;
-    color: $color-text-secondary;
+    color: shared.$color-text-secondary;
     font-size: 0.875rem;
   }
 }

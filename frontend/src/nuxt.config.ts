@@ -7,7 +7,8 @@ export default defineNuxtConfig({
     css: {
       preprocessorOptions: {
         sass: {
-          additionalData: '@import "~/assets/styles/_shared.sass"',
+          api: "modern-compiler",
+          additionalData: '@use "~/assets/styles/_shared.scss" as shared;',
         },
       },
     },
@@ -22,10 +23,16 @@ export default defineNuxtConfig({
     },
   },
   compatibilityDate: "2024-12-01",
-  modules: ["@nuxt/devtools", "@clerk/nuxt", "@nuxtjs/google-fonts"],
+  modules: [
+    "@nuxt/devtools",
+    "@clerk/nuxt",
+    "@nuxtjs/google-fonts",
+    "@nuxt/icon",
+  ],
   googleFonts: {
     families: {
       "Open+Sans": [400, 500],
+      "Noto+Sans": [400, 500, 600],
     },
     preload: true,
     download: true,

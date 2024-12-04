@@ -9,10 +9,13 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "^1.6.1",
+    "@nuxt/icon": "^1.9.0",
     "@nuxtjs/google-fonts": "^3.2.0",
     "nuxt": "^3.14.1592",
-    "sass": "^1.81.0",
-    "vite-plugin-node-stdlib-browser": "^0.2.1"
+    "sass": "^1.81.1",
+    "sass-loader": "^16.0.3",
+    "vite-plugin-node-stdlib-browser": "^0.2.1",
+    "webpack": "^5.97.0"
   },
   "dependencies": {
     "@clerk/nuxt": "^0.0.5",
