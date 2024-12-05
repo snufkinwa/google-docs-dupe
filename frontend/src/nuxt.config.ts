@@ -29,6 +29,9 @@ export default defineNuxtConfig({
     "@nuxtjs/google-fonts",
     "@nuxt/icon",
   ],
+  clerk: {
+    publishableKey: process.env.NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+  },
   googleFonts: {
     families: {
       "Open+Sans": [400, 500],

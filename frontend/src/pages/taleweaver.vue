@@ -35,6 +35,7 @@
 import type { IConfig } from "@taleweaver/core";
 import type { IResolvedFont } from "@taleweaver/core/dist/tw/render/service";
 import sample from "../editor/littleRedRidingHood";
+import resume from "../editor/resume";
 
 export default defineComponent({
   mounted() {
@@ -44,7 +45,7 @@ export default defineComponent({
   data() {
     return {
       documentTitle: "Untitled document",
-      initialDoc: sample,
+      initialDoc: resume,
       config: {
         page: {
           width: 816,
