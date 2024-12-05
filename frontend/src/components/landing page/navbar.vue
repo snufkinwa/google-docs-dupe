@@ -43,6 +43,7 @@ const links = ["Solutions", "Products", "AI", "Pricing"];
   justify-content: space-between;
   padding: 12px 24px;
   border-bottom: 1px solid shared.$color-border;
+  position: sticky;
 
   &__left {
     display: flex;

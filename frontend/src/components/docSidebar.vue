@@ -43,17 +43,17 @@ const props = defineProps({
       <div class="divider"></div>
 
       <button class="menu-item">
-        <Icon name="heroicons:cog-6-tooth" />
+        <Icon name="ic:baseline-settings" />
         <span>Settings</span>
       </button>
 
       <button class="menu-item">
-        <Icon name="heroicons:question-mark-circle" />
+        <Icon name="ic:sharp-help-outline" />
         <span>Help</span>
       </button>
 
       <a href="#" class="menu-item">
-        <Icon name="heroicons:folder" />
+        <Icon name="ic:baseline-folder" />
         <span>Storage</span>
       </a>
     </nav>
@@ -70,7 +70,7 @@ const props = defineProps({
 .side-menu {
   position: fixed;
   left: 0;
-  top: 67px;
+  top: 63px;
   width: 260px;
   height: calc(100vh - 67px);
   background: white;

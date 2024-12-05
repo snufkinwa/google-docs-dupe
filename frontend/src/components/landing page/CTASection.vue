@@ -4,7 +4,7 @@
       <div class="cta__container">
         <!-- Google Docs-style Icon -->
         <div class="cta__icon">
-          <img src="../../assets/DOCUVY.svg" alt="Docuvy Icon" />
+          <img src="/images/DOCUVY.svg" alt="Docuvy Icon" />
         </div>
 
         <!-- Main CTA Content -->

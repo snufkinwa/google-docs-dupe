@@ -30,7 +30,7 @@
         <img src="/images/HeroSection_Right.png" class="image-right" />
       </div>
     </div>
-    <HeroTabs @tab-change="handleTabChange" />
+    <HeroTabs @tab-change="handleTabChange" class="hero__tabs" />
 
     <div class="hero__sections">
       <section
@@ -137,6 +137,15 @@ const handleTabChange = (sectionId) => {
   .image-right {
     width: 500px;
     height: auto;
+  }
+
+  &__tabs {
+    position: sticky;
+    top: 5em;
+    z-index: 10;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.06);
+    background-color: #fff;
+    border-bottom: 1px solid #e5e7eb;
   }
 
   &__sections {
