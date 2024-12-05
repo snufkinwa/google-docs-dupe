@@ -1,12 +1,28 @@
 <script setup>
+import { ref } from "vue";
+import docSidebar from "~/components/docSidebar.vue";
+
 const { data: documents } = await useFetch("/api/documents");
 const { user } = useUser();
 
+// Sidebar visibility state
+const isSidebarVisible = ref(false);
+
+// Toggle sidebar
+const toggleSidebar = () => {
+  isSidebarVisible.value = !isSidebarVisible.value;
+};
+
 const templates = [
   { name: "Blank document", type: "blank" },
-  { name: "Resume", type: "Serif", preview: "/api/placeholder/120/160" },
-  { name: "Letter", type: "Spearmint", preview: "/api/placeholder/120/160" },
-  { name: "Report", type: "Luxe", preview: "/api/placeholder/120/160" },
+  { name: "Resume", type: "Coral", preview: "image/Resume.png" },
+  { name: "Letter", type: "Spearmint", preview: "/image/Letter.png" },
+  {
+    name: "Project proposal",
+    type: "Tropic",
+    preview: "/image/Project.png",
+  },
+  { name: "Report", type: "Luxe", preview: "/image/Report.png" },
 ];
 
 const createDocument = async (template) => {
@@ -23,42 +39,50 @@ const createDocument = async (template) => {
     console.error("Failed to create document:", error);
   }
 };
-
-const showDocumentMenu = (doc) => {
-  // Add menu logic here
-};
 </script>
 
 <template>
   <div class="documents">
+    <!-- Sidebar -->
+    <transition name="slide">
+      <docSidebar v-show="isSidebarVisible" />
+    </transition>
+
+    <!-- Header -->
     <header class="header">
-      <button class="menu-btn">
-        <Icon name="heroicons:bars-3" />
-      </button>
-      <img src="/docs-icon.png" alt="Docs" class="logo" />
-      <h1>Docs</h1>
+      <div class="right-section">
+        <button class="menu-btn" @click="toggleSidebar">
+          <Icon name="ic:baseline-menu" size="2em" />
+        </button>
+        <div class="logo-section">
+          <img src="/images/DOCUVY.svg" alt="Docuvy" class="logo" />
+          <h1>Docuvy</h1>
+        </div>
+      </div>
 
       <div class="search">
-        <Icon name="heroicons:magnifying-glass" />
+        <Icon name="ic:baseline-search" size="1.75em" />
         <input type="text" placeholder="Search" />
       </div>
 
       <div class="header-actions">
         <button class="grid-btn">
-          <Icon name="heroicons:squares-2x2" />
+          <Icon name="ic:baseline-apps" size="2em" />
         </button>
-        <img src="/api/placeholder/32/32" alt="Profile" class="profile" />
+        <UserButton />
       </div>
     </header>
 
-    <main>
+    <main class="main-content">
       <div class="new-document">
         <div class="section-header">
           <h2>Start a new document</h2>
-          <button class="template-btn">
-            Template gallery
-            <Icon name="heroicons:chevron-down" />
-          </button>
+          <div class="header-buttons">
+            <button class="template-btn">Template gallery</button>
+            <button class="more-btn">
+              <Icon name="ic:baseline-more-vert" size="1.5em" />
+            </button>
+          </div>
         </div>
 
         <div class="templates-grid">
@@ -70,7 +94,9 @@ const showDocumentMenu = (doc) => {
           >
             <div class="template-preview">
               <template v-if="template.type === 'blank'">
-                <div class="blank-plus">+</div>
+                <div class="blank-plus">
+                  <Icon name="ic:baseline-add" class="plus-icon" />
+                </div>
               </template>
               <img v-else :src="template.preview" :alt="template.name" />
             </div>
@@ -83,6 +109,26 @@ const showDocumentMenu = (doc) => {
       </div>
 
       <div class="recent-documents">
+        <div class="section-header">
+          <h2>Recent documents</h2>
+          <div class="view-controls">
+            <select>
+              <option>Owned by anyone</option>
+            </select>
+            <div class="view-buttons">
+              <button>
+                <Icon name="ic:twotone-view-list" size="1.5em" />
+              </button>
+              <button>
+                <Icon name="ic:twotone-sort-by-alpha" size="1.5em" />
+              </button>
+              <button>
+                <Icon name="ic:baseline-folder-open" size="1.5em" />
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div v-if="documents?.length" class="documents-grid">
           <NuxtLink
             v-for="doc in documents"
@@ -92,21 +138,19 @@ const showDocumentMenu = (doc) => {
           >
             <div class="document-preview">
               <img
-                :src="doc.preview || '/api/placeholder/120/160'"
+                :src="doc.preview || '/api/placeholder/160/220'"
                 :alt="doc.name"
               />
             </div>
             <div class="document-info">
-              <div>
-                <p class="document-name">{{ doc.name }}</p>
-                <p class="document-date">
-                  <Icon name="heroicons:document" />
-                  {{ new Date(doc.updated_at).toLocaleDateString() }}
-                </p>
+              <p class="document-name">{{ doc.name }}</p>
+              <div class="document-meta">
+                <Icon name="heroicons:document" size="16" />
+                <span>{{ new Date(doc.updated_at).toLocaleDateString() }}</span>
+                <button class="more-btn">
+                  <Icon name="heroicons:ellipsis-vertical" />
+                </button>
               </div>
-              <button class="more-btn" @click.prevent="showDocumentMenu(doc)">
-                <Icon name="heroicons:ellipsis-vertical" />
-              </button>
             </div>
           </NuxtLink>
         </div>
@@ -120,17 +164,29 @@ const showDocumentMenu = (doc) => {
 </template>
 
 <style lang="scss">
+button {
+  border: none;
+  padding: 0;
+  background-color: transparent;
+}
+
 .documents {
   min-height: 100vh;
-  background: #f8f9fa;
+  background: white;
 
   .header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     padding: 0.5rem 1rem;
-    background: white;
-    border-bottom: 1px solid #e5e7eb;
+    gap: 1rem;
 
+    .right-section {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+    }
     .menu-btn {
       padding: 0.5rem;
       border-radius: 50%;
@@ -139,91 +195,107 @@ const showDocumentMenu = (doc) => {
       }
     }
 
-    .logo {
-      height: 2rem;
-      margin-left: 0.5rem;
-    }
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
 
-    h1 {
-      margin-left: 0.5rem;
-      font-size: 1.25rem;
+      .logo {
+        height: 2.5rem;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+        font-weight: 500;
+        color: #5f6368;
+      }
     }
 
     .search {
       flex-grow: 1;
-      margin: 0 1rem;
-      max-width: 42rem;
-      background: #f3f4f6;
-      border-radius: 9999px;
-      padding: 0.5rem 1.5rem;
+      max-width: 600px;
+      background: #f1f3f4;
+      border-radius: 24px;
+      padding: 0.5rem 1rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
 
       input {
+        border: none;
         background: transparent;
         width: 100%;
+        font-size: 1rem;
         &:focus {
           outline: none;
         }
       }
     }
-  }
 
-  .header-actions {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .templates-grid,
-  .documents-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 1rem;
-    margin-top: 1rem;
-  }
-
-  .template,
-  .document {
-    border: 1px solid #e5e7eb;
-    border-radius: 0.5rem;
-    padding: 0.25rem;
-    cursor: pointer;
-    transition: border-color 0.2s;
-
-    &:hover {
-      border-color: #3b82f6;
-    }
-
-    &-preview {
-      aspect-ratio: 3/4;
-      background: white;
-      border-radius: 0.25rem;
-      margin-bottom: 0.5rem;
+    .header-actions {
       display: flex;
-      align-items: center;
+      gap: 0.5rem;
       justify-content: center;
 
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 0.25rem;
+      button {
+        padding: 0.5rem;
+        border-radius: 50%;
+        &:hover {
+          background: #f3f4f6;
+        }
       }
     }
   }
 
-  .blank-plus {
-    font-size: 2rem;
-    color: #666;
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 300px;
+    background: #ffffff;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+
+    &.hidden {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    &.visible {
+      transform: translateX(0);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .slide-enter-active,
+    .slide-leave-active {
+      transition: transform 0.3s ease;
+    }
+    .slide-enter-from,
+    .slide-leave-to {
+      transform: translateX(-100%);
+    }
+    .slide-enter-to,
+    .slide-leave-from {
+      transform: translateX(0);
+    }
   }
 
-  .document-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem;
+  .main-content {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .new-document {
+    background-color: #f3f4f6;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    padding: 2rem calc(50vw - 50% + 1.5rem);
+  }
+
+  .recent-documents {
+    padding-top: 2rem;
   }
 
   .section-header {
@@ -234,6 +306,162 @@ const showDocumentMenu = (doc) => {
 
     h2 {
       font-size: 1rem;
+      color: #666;
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .view-controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+
+      select {
+        appearance: none;
+        background: url("data:image/svg+xml;utf8,<svg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path fill='%235F6368' d='m7 10l5 5l5-5z'/></svg>")
+          no-repeat;
+        background-position: right 8px center;
+        background-position-x: 100%;
+        background-position-y: 50%;
+        padding: 8px 32px 8px 12px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        color: #5f6368;
+        font: inherit;
+        cursor: pointer;
+      }
+
+      .view-buttons {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.25rem;
+
+        button {
+          padding: 0.5rem;
+          border-radius: 0.25rem;
+          &:hover {
+            background: #f3f4f6;
+          }
+        }
+      }
+    }
+  }
+
+  .templates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .template {
+    cursor: pointer;
+
+    &-preview {
+      aspect-ratio: 3/4;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      transition: border-color 0.2s;
+
+      &:hover {
+        border-color: #1a73e8;
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    &-info {
+      margin-top: 0.5rem;
+      text-align: center;
+    }
+
+    &-name {
+      font-weight: 500;
+    }
+
+    &-type {
+      color: #666;
+      font-size: 0.875rem;
+    }
+  }
+
+  .blank-plus {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .plus-icon {
+      width: 3em;
+      height: 3em;
+      color: #1a73e8;
+    }
+  }
+
+  .documents-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+  }
+
+  .document {
+    text-decoration: none;
+    color: inherit;
+
+    &-preview {
+      aspect-ratio: 3/4;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      transition: border-color 0.2s;
+
+      &:hover {
+        border-color: #1a73e8;
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    &-info {
+      margin-top: 0.5rem;
+    }
+
+    &-name {
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+
+    &-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #666;
+      font-size: 0.875rem;
+    }
+  }
+
+  .more-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.25rem;
+    border-radius: 50%;
+    &:hover {
+      background: #f3f4f6;
     }
   }
 }

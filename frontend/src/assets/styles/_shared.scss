@@ -19,7 +19,7 @@ $color-background: #f8f9fa;
   @include button-base;
   background: $color-primary;
   color: #fff;
-  border: none;
+  border: 1px solid $color-border;
   padding: 12px 24px;
 
   &:hover {

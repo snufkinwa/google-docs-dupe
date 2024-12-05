@@ -19,7 +19,7 @@
           />
           <button class="hero__try-free">
             Try Docs for work
-            <div class="divider"></div>
+            <span class="divider"></span>
             <img
               src="../../assets/icons/arrow_drop_down_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg"
             />
