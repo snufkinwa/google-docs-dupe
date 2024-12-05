@@ -7,7 +7,7 @@ const features = ref([
     id: 0,
     title: "Meet directly in your documents",
     description: "Collaborate in context by meeting in Docuvy",
-    image: "/images/meet-preview.jpg",
+    image: "/images/beam-preview.png",
     isPremium: true,
   },
   {
@@ -55,7 +55,7 @@ const setActiveFeature = (index) => {
               v-show="activeFeature === feature.id"
               class="image-container"
             >
-              <div class="image-placeholder"></div>
+              <img :src="feature.image" :alt="feature.title" />
             </div>
           </TransitionGroup>
         </div>
@@ -107,7 +107,7 @@ const setActiveFeature = (index) => {
     h1 {
       font-size: 2.5rem;
       font-weight: 500;
-      width: 700px;
+      width: 650px;
       margin-bottom: 1rem;
     }
 
@@ -129,20 +129,17 @@ const setActiveFeature = (index) => {
   .feature-images {
     position: relative;
     height: 500px;
-    background-color: #f5f5f5;
     border-radius: 8px;
     overflow: hidden;
 
     .image-container {
       position: absolute;
       inset: 0;
-      padding: 1.5rem;
 
-      .image-placeholder {
+      img {
         width: 100%;
         height: 100%;
-        background-color: #e5e5e5;
-        border-radius: 4px;
+        object-fit: contain;
       }
     }
   }

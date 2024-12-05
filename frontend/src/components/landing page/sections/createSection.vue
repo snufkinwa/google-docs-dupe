@@ -8,27 +8,27 @@ const features = ref([
     title: "Get a jumpstart on your document with smart canvas",
     description:
       "Instantly build formatted emails, calendar invites, review trackers, meeting notes, and more in Docuvy when you type '@.'",
-    image: "/images/smart-canvas.jpg",
+    image: "/images/smart-canvas.png",
   },
   {
     id: 1,
     title: "Easily populate your document with rich details",
     description:
       "Add smart chips, tables, and formatting with simple keyboard shortcuts.",
-    image: "/images/rich-details.jpg",
+    image: "../../../assets/smart-canvas.png",
   },
   {
     id: 2,
     title: "Remove page breaks and write without limits",
     description:
       "Focus on your content without worrying about page formatting.",
-    image: "/images/no-breaks.jpg",
+    image: "../../../assets/smart-canvas.png",
   },
   {
     id: 3,
     title: "Stay organized with document tabs",
     description: "Keep your work organized and easily accessible.",
-    image: "/images/document-tabs.jpg",
+    image: "../../../../assets/smart-canvas.png",
   },
 ]);
 
@@ -74,7 +74,7 @@ const setActiveFeature = (index) => {
               v-show="activeFeature === feature.id"
               class="image-container"
             >
-              <div class="image-placeholder"></div>
+              <img :src="feature.image" :alt="feature.title" />
             </div>
           </TransitionGroup>
         </div>
@@ -181,21 +181,17 @@ const setActiveFeature = (index) => {
   .feature-images {
     position: relative;
     height: 500px;
-    background-color: #f5f5f5;
     border-radius: 8px;
     overflow: hidden;
-    order: 2; // Ensures images stay on the right
+    order: 2;
 
     .image-container {
       position: absolute;
       inset: 0;
-      padding: 1.5rem;
-
-      .image-placeholder {
+      img {
         width: 100%;
         height: 100%;
-        background-color: #e5e5e5;
-        border-radius: 4px;
+        object-fit: contain;
       }
     }
   }

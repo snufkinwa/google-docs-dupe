@@ -23,7 +23,7 @@ const faqs = [
   {
     question: "How was this site built?",
     answer:
-      "This site was built using Nuxt 3, featuring modern web technologies including Vue.js and SCSS for styling. It implements Clerk for authentication and uses a Rust backend for data management.",
+      "This site was built using Nuxt 3, featuring modern web technologies including Vue.js and SCSS for styling. It implements Clerk for authentication and uses a Rust backend with WebSocket support for real-time data management. Data is stored in MongoDB.",
   },
   {
     question:

@@ -3,7 +3,7 @@
     <div class="hero__content">
       <div class="hero__left">
         <div class="hero__product">
-          <img src="~/assets/DOCUVY.svg" alt="Docuvy" class="hero__icon" />
+          <img src="/images/DOCUVY.svg" alt="Docuvy" class="hero__icon" />
           <h2 class="hero__product-name">Docuvy</h2>
         </div>
         <h1 class="hero__title">Online, collaborative documents</h1>
@@ -27,7 +27,7 @@
         </div>
       </div>
       <div class="hero__right">
-        <img src="../../assets/HeroSection_Right.png" class="image-right" />
+        <img src="/images/HeroSection_Right.png" class="image-right" />
       </div>
     </div>
     <HeroTabs @tab-change="handleTabChange" />
