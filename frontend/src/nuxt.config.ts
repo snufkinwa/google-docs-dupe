@@ -25,7 +25,7 @@ export default defineNuxtConfig({
   compatibilityDate: "2024-12-01",
   modules: [
     "@nuxt/devtools",
-    "@clerk/nuxt",
+    "vue-clerk/nuxt",
     "@nuxtjs/google-fonts",
     "@nuxt/icon",
   ],
