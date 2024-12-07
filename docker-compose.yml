@@ -1,0 +1,29 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/usr/src/app
+      - ./packages/core:/usr/src/packages/core
+    working_dir: /usr/src/app/frontend/src
+    command: npm run dev
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/usr/src/backend
+    working_dir: /usr/src/backend
+    command: cargo run
+    environment:
+      - RUST_LOG=debug

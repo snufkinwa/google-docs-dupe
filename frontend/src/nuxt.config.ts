@@ -32,6 +32,11 @@ export default defineNuxtConfig({
   clerk: {
     publishableKey: process.env.NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
   },
+  hooks: {
+    "pages:extend"(pages) {
+      console.log(pages);
+    },
+  },
   googleFonts: {
     families: {
       "Open+Sans": [400, 500],

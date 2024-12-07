@@ -1,8 +1,16 @@
 <script setup>
 import { ref } from "vue";
 import docSidebar from "~/components/docSidebar.vue";
+import { useRouter, useRoute } from "vue-router"; // Import useRouter and useRoute
+import { v4 as uuidv4 } from "uuid";
 
-const { data: documents } = await useFetch("/api/documents");
+const router = useRouter();
+const route = useRoute(); // Initialize useRoute to access route params
+
+// Access the dynamic document ID (if applicable)
+const documentId = route.params.id; // This works only if you're in a dynamic route (e.g., /documents/:id)
+
+//const { data: documents } = await useFetch("/api/documents");
 const { user } = useUser();
 
 // Sidebar visibility state
@@ -27,14 +35,12 @@ const templates = [
 
 const createDocument = async (template) => {
   try {
-    await $fetch("/api/documents", {
-      method: "POST",
-      body: {
-        name: "Untitled Document",
-        templateType: template.type,
-      },
-    });
-    await refreshNuxtData();
+    // Generate a UUID for the document
+    const id = uuidv4();
+
+    // Redirect to the new document page with the generated ID
+    router.push(`/document/${id}`); // Navigate to /documents/:id
+    return;
   } catch (error) {
     console.error("Failed to create document:", error);
   }
