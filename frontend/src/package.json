@@ -19,8 +19,20 @@
   },
   "dependencies": {
     "@clerk/backend": "^1.19.2",
+    "@nuxtjs/router": "^1.7.0",
     "@taleweaver/core": "file:../packages/core",
     "node-stdlib-browser": "^1.2.0",
+    "prosemirror-commands": "^1.6.2",
+    "prosemirror-example-setup": "^1.2.3",
+    "prosemirror-history": "^1.4.1",
+    "prosemirror-keymap": "^1.2.2",
+    "prosemirror-model": "^1.24.0",
+    "prosemirror-pagination": "^0.1.5",
+    "prosemirror-schema-basic": "^1.2.3",
+    "prosemirror-schema-list": "^1.5.0",
+    "prosemirror-state": "^1.4.3",
+    "prosemirror-transform": "^1.10.2",
+    "prosemirror-view": "^1.37.0",
     "uuid": "^11.0.3",
     "vue-clerk": "^0.9.5"
   }
