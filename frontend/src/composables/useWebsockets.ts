@@ -1,4 +1,3 @@
-// useWebSocket.ts
 import { ref, onUnmounted } from "vue";
 
 interface UpdateMessage {

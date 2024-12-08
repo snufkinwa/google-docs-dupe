@@ -14,14 +14,11 @@
     "nuxt": "^3.14.1592",
     "sass": "^1.81.1",
     "sass-loader": "^16.0.3",
-    "vite-plugin-node-stdlib-browser": "^0.2.1",
     "webpack": "^5.97.0"
   },
   "dependencies": {
     "@clerk/backend": "^1.19.2",
     "@nuxtjs/router": "^1.7.0",
-    "@taleweaver/core": "file:../packages/core",
-    "node-stdlib-browser": "^1.2.0",
     "prosemirror-commands": "^1.6.2",
     "prosemirror-example-setup": "^1.2.3",
     "prosemirror-history": "^1.4.1",
@@ -32,6 +29,7 @@
     "prosemirror-schema-list": "^1.5.0",
     "prosemirror-state": "^1.4.3",
     "prosemirror-transform": "^1.10.2",
+    "prosemirror-utils": "^1.2.2",
     "prosemirror-view": "^1.37.0",
     "uuid": "^11.0.3",
     "vue-clerk": "^0.9.5"

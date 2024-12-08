@@ -1,88 +1,93 @@
 use axum::{
-    extract::ws::{Message, WebSocket, WebSocketUpgrade},
-    routing::get,
-    Router,
+    routing::{get, post},
+    extract::ws::WebSocketUpgrade,
+    response::IntoResponse,
+    Json, Router, Server,
 };
-use std::net::SocketAddr;
 use std::sync::Arc;
-use tokio::sync::{broadcast, Mutex};
-use tokio::task::JoinHandle;
+use std::env;
+use tokio::sync::broadcast;
+use tower_http::services::ServeDir;
+
+mod db;
+mod editor;
+mod websocket;
+mod types;
+
+use db::mongodb::MongoDB;
+use types::{User as TypesUser, ShareRequest};
+use websocket::handler::WebSocketHandler;
 
 #[tokio::main]
 async fn main() {
-    // Shared state: the collaborative document
-    let shared_doc = Arc::new(Mutex::new(String::new()));
+    let mongodb_uri = env::var("MONGODB_URI").expect("MONGODB_URI must be set in .env");
 
-    // Broadcast channel for real-time updates
-    let (tx, _) = broadcast::channel(100);
+    // Initialize MongoDB
+    let mongo = Arc::new(MongoDB::new(&mongodb_uri).await.unwrap());
 
-    // Create the WebSocket route
+    let (tx, _) = broadcast::channel::<WebSocketMessage>(100);
+
+
     let app = Router::new()
-        .route("/ws", get({
-            let shared_doc = shared_doc.clone();
-            move |ws| ws_handler(ws, shared_doc.clone(), tx.clone())
-        }));
+        // MongoDB API routes
+        .route("/api/users/sync", post(sync_user))
+        .route("/api/documents/share", post(share_document))
+        // WebSocket route
+        .route("/ws/:doc_id", get(handle_websocket))
+        // Static file serving
+        .nest_service("/static", ServeDir::new("static"))
+        // Catch-all route
+        .fallback(handler_404)
+        // Shared state
+        .layer(axum::extract::Extension(mongo))
+        .layer(axum::extract::Extension(Arc::new(tx)));
 
     // Start the server
-    let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
-    println!("WebSocket server running at ws://{}", addr);
+    let addr = "127.0.0.1:3000".parse().unwrap();
+    println!("Server listening on {}", addr);
 
-    axum::Server::bind(&addr)
+    Server::bind(&addr)
         .serve(app.into_make_service())
         .await
         .unwrap();
 }
 
-// WebSocket handler
-async fn ws_handler(
+// WebSocket connection handler
+async fn handle_websocket(
     ws: WebSocketUpgrade,
-    shared_doc: Arc<Mutex<String>>,
-    tx: broadcast::Sender<String>,
-) -> impl axum::response::IntoResponse {
-    ws.on_upgrade(move |socket| handle_socket(socket, shared_doc, tx))
+    axum::extract::Path(doc_id): axum::extract::Path<String>,
+    axum::extract::Extension(tx): axum::extract::Extension<Arc<broadcast::Sender<WebSocketMessage>>>,
+) -> impl IntoResponse {
+    ws.on_upgrade(move |socket| {
+        let mut handler = WebSocketHandler::new(socket, doc_id.clone(), tx.clone());
+        async move { handler.handle().await }
+    })
 }
 
-// Handle WebSocket connection
-async fn handle_socket(
-    socket: WebSocket,
-    shared_doc: Arc<Mutex<String>>,
-    tx: broadcast::Sender<String>,
-) {
-    println!("New WebSocket connection established");
-
-    let socket = Arc::new(Mutex::new(socket)); 
-    let mut rx = tx.subscribe();
-
-    // Spawn a task to send updates to the client
-    let socket_writer = socket.clone(); 
-    let send_task: JoinHandle<()> = tokio::spawn(async move {
-        while let Ok(updated_doc) = rx.recv().await {
-            let mut socket = socket_writer.lock().await;
-            if socket.send(Message::Text(updated_doc)).await.is_err() {
-                println!("Error sending message to client");
-                break;
-            }
-        }
-    });
-
-    // Main loop to handle client messages
-    while let Some(Ok(message)) = socket.lock().await.recv().await {
-        println!("Received message from client: {:?}", message); 
-
-        if let Message::Text(client_edit) = message {
-            // Update the shared document
-            {
-                let mut doc = shared_doc.lock().await;
-                doc.push_str(&client_edit); 
-            }
-
-            // Broadcast the updated document
-            let updated_doc = shared_doc.lock().await.clone();
-            println!("Broadcasting: {}", updated_doc);
-            let _ = tx.send(updated_doc);
-        }
+// MongoDB user synchronization handler
+async fn sync_user(
+    axum::extract::Extension(mongo): axum::extract::Extension<Arc<MongoDB>>,
+    Json(user_data): Json<TypesUser>, // Explicitly use `types::User`
+) -> impl IntoResponse {
+    match mongo.save_user(user_data).await {
+        Ok(_) => (axum::http::StatusCode::OK, "User synced successfully").into_response(),
+        Err(e) => (axum::http::StatusCode::INTERNAL_SERVER_ERROR, format!("Error: {}", e)).into_response(),
     }
+}
 
-    // Ensure the send task is stopped
-    send_task.abort();
+
+// MongoDB document sharing handler
+async fn share_document(
+    axum::extract::Extension(mongo): axum::extract::Extension<Arc<MongoDB>>,
+    Json(payload): Json<types::ShareRequest>, // Assuming a `ShareRequest` struct is in `types`
+) -> impl IntoResponse {
+    match mongo.add_collaborator(&payload.doc_id, &payload.collaborator_id).await {
+        Ok(_) => (axum::http::StatusCode::OK, "Collaborator added successfully").into_response(),
+        Err(e) => (axum::http::StatusCode::INTERNAL_SERVER_ERROR, format!("Error: {}", e)).into_response(),
+    }
+}
+
+// Fallback handler for unknown routes
+async fn handler_404() -> impl IntoResponse {
+    (axum::http::StatusCode::NOT_FOUND, "Route not found")
 }

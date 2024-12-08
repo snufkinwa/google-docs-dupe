@@ -3,7 +3,6 @@ import nodePolyfills from "vite-plugin-node-stdlib-browser";
 
 export default defineNuxtConfig({
   vite: {
-    plugins: [nodePolyfills()],
     css: {
       preprocessorOptions: {
         sass: {
@@ -11,9 +10,6 @@ export default defineNuxtConfig({
           additionalData: '@use "~/assets/styles/_shared.scss" as shared;',
         },
       },
-    },
-    optimizeDeps: {
-      include: ["@taleweaver/core"],
     },
   },
   css: ["~/assets/styles/global.scss"],
@@ -31,11 +27,6 @@ export default defineNuxtConfig({
   ],
   clerk: {
     publishableKey: process.env.NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
-  },
-  hooks: {
-    "pages:extend"(pages) {
-      console.log(pages);
-    },
   },
   googleFonts: {
     families: {
