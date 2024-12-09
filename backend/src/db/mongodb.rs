@@ -1,4 +1,4 @@
-use mongodb::{bson::doc, options::ClientOptions, Client, Collection};
+use mongodb::{bson::doc, options:: ClientOptions, Client, Collection};
 use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};
 

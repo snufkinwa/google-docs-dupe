@@ -29,7 +29,7 @@ const faqs = [
     question:
       "What external tools or libraries were used in building this site?",
     answer:
-      "This project incorporates open-source code licensed under MIT, including a layout engine used to enhance the collaborative document experience. We deeply value the contributions of the open-source community in making projects like this possible.",
+      "This project incorporates ProseMirror and customizes it to create a rich text editing experience tailored to the application's needs.",
   },
   {
     question: "Is this open source?",

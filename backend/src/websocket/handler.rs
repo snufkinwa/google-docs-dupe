@@ -1,13 +1,16 @@
-use crate::types::{EditorState, Step, WebSocketMessage};
+
+
+use crate::websocket::types::WebSocketMessage;
 use axum::extract::ws::{Message, WebSocket};
 use tokio::sync::{broadcast, Mutex};
 use serde_json::Value;
 use std::sync::Arc;
 
+
 pub struct WebSocketHandler {
     socket: WebSocket,
     doc_id: String,
-    tx: broadcast::Sender<WebSocketMessage>,
+    tx: broadcast::Sender<WebSocketMessage>
 }
 
 impl WebSocketHandler {
@@ -36,7 +39,7 @@ impl WebSocketHandler {
         }
     }
 
-    async fn handle_message(&self, msg: Option<Result<Message, axum::Error>>) -> bool {
+    async fn handle_message(&mut self, msg: Option<Result<Message, axum::Error>>) -> bool {
         match msg {
             Some(Ok(Message::Text(text))) => {
                 let message: WebSocketMessage = match serde_json::from_str(&text) {
@@ -69,32 +72,5 @@ impl WebSocketHandler {
             None | Some(Err(_)) => false,
             _ => true,
         }
-    }
-}
-
-// Validation methods for Doc and Node
-impl crate::types::Doc {
-    pub fn validate(&self) -> Result<(), String> {
-        if self.type_ != "doc" {
-            return Err("Document root must be of type 'doc'".to_string());
-        }
-        for node in &self.content {
-            node.validate()?;
-        }
-        Ok(())
-    }
-}
-
-impl crate::types::Node {
-    pub fn validate(&self) -> Result<(), String> {
-        if self.type_.is_empty() {
-            return Err("Node type cannot be empty".to_string());
-        }
-        if let Some(content) = &self.content {
-            for child in content {
-                child.validate()?;
-            }
-        }
-        Ok(())
     }
 }

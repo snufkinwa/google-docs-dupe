@@ -1,13 +1,9 @@
 use axum::{
-    routing::{get, post},
-    extract::ws::WebSocketUpgrade,
-    response::IntoResponse,
-    Json, Router, Server,
+    extract::ws::WebSocketUpgrade, response::IntoResponse, routing::{get, post}, Json, Router, Server
 };
 use std::sync::Arc;
 use std::env;
 use tokio::sync::broadcast;
-use tower_http::services::ServeDir;
 
 mod db;
 mod editor;
@@ -15,8 +11,7 @@ mod websocket;
 mod types;
 
 use db::mongodb::MongoDB;
-use types::{User as TypesUser, ShareRequest};
-use websocket::handler::WebSocketHandler;
+use websocket::{handler::WebSocketHandler, types::WebSocketMessage};
 
 #[tokio::main]
 async fn main() {
@@ -27,22 +22,12 @@ async fn main() {
 
     let (tx, _) = broadcast::channel::<WebSocketMessage>(100);
 
+let app = Router::new()
+    .route("/api/users/sync", post(sync_user))
+    .route("/api/documents/share", post(share_document))
+    .route("/ws/:doc_id", get(handle_websocket));
 
-    let app = Router::new()
-        // MongoDB API routes
-        .route("/api/users/sync", post(sync_user))
-        .route("/api/documents/share", post(share_document))
-        // WebSocket route
-        .route("/ws/:doc_id", get(handle_websocket))
-        // Static file serving
-        .nest_service("/static", ServeDir::new("static"))
-        // Catch-all route
-        .fallback(handler_404)
-        // Shared state
-        .layer(axum::extract::Extension(mongo))
-        .layer(axum::extract::Extension(Arc::new(tx)));
 
-    // Start the server
     let addr = "127.0.0.1:3000".parse().unwrap();
     println!("Server listening on {}", addr);
 
@@ -52,24 +37,33 @@ async fn main() {
         .unwrap();
 }
 
-// WebSocket connection handler
 async fn handle_websocket(
     ws: WebSocketUpgrade,
     axum::extract::Path(doc_id): axum::extract::Path<String>,
     axum::extract::Extension(tx): axum::extract::Extension<Arc<broadcast::Sender<WebSocketMessage>>>,
 ) -> impl IntoResponse {
-    ws.on_upgrade(move |socket| {
-        let mut handler = WebSocketHandler::new(socket, doc_id.clone(), tx.clone());
-        async move { handler.handle().await }
+    let tx = tx.as_ref().clone();
+    ws.on_upgrade(|socket| async move {
+        let mut handler = WebSocketHandler::new(socket, doc_id, tx);
+        handler.handle().await;
     })
 }
+
 
 // MongoDB user synchronization handler
 async fn sync_user(
     axum::extract::Extension(mongo): axum::extract::Extension<Arc<MongoDB>>,
-    Json(user_data): Json<TypesUser>, // Explicitly use `types::User`
+    Json(user_data): Json<types::User>,
 ) -> impl IntoResponse {
-    match mongo.save_user(user_data).await {
+    // Convert types::User to mongodb::User
+    let mongo_user = db::mongodb::User {
+        _id: user_data._id,
+        email: user_data.email,
+        name: user_data.name,
+        profile_pic: user_data.profile_pic,
+    };
+
+    match mongo.save_user(mongo_user).await {
         Ok(_) => (axum::http::StatusCode::OK, "User synced successfully").into_response(),
         Err(e) => (axum::http::StatusCode::INTERNAL_SERVER_ERROR, format!("Error: {}", e)).into_response(),
     }
