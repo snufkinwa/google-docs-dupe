@@ -3,6 +3,7 @@ use axum::{
 };
 use std::sync::Arc;
 use std::env;
+use dotenv::dotenv;
 use tokio::sync::broadcast;
 
 mod db;
@@ -15,6 +16,8 @@ use websocket::{handler::WebSocketHandler, types::WebSocketMessage};
 
 #[tokio::main]
 async fn main() {
+    dotenv().ok();
+
     let mongodb_uri = env::var("MONGODB_URI").expect("MONGODB_URI must be set in .env");
 
     // Initialize MongoDB
@@ -31,7 +34,7 @@ let app = Router::new()
     .layer(Extension(Arc::new(tx.clone())));
 
 
-    let addr = "127.0.0.1:3000".parse().unwrap();
+    let addr = "127.0.0.1:8080".parse().unwrap();
     println!("Server listening on {}", addr);
 
     Server::bind(&addr)
