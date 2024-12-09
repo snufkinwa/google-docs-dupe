@@ -1,5 +1,5 @@
 use axum::{
-    extract::ws::WebSocketUpgrade, response::IntoResponse, routing::{get, post}, Json, Router, Server
+    extract::ws::WebSocketUpgrade, response::IntoResponse, routing::{get, post}, Json, Router, Server, Extension
 };
 use std::sync::Arc;
 use std::env;
@@ -25,7 +25,10 @@ async fn main() {
 let app = Router::new()
     .route("/api/users/sync", post(sync_user))
     .route("/api/documents/share", post(share_document))
-    .route("/ws/:doc_id", get(handle_websocket));
+    .route("/ws/:doc_id", get(handle_websocket))
+    .fallback(handler_404) 
+    .layer(Extension(mongo.clone())) 
+    .layer(Extension(Arc::new(tx.clone())));
 
 
     let addr = "127.0.0.1:3000".parse().unwrap();
