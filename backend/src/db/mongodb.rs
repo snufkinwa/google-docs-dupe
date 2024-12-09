@@ -2,7 +2,7 @@ use mongodb::{bson::doc, options:: ClientOptions, Client, Collection};
 use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct User {
     pub _id: String,
     pub email: String,
@@ -33,7 +33,6 @@ impl MongoDB {
 
     pub async fn save_user(&self, user: User) -> mongodb::error::Result<()> {
         let collection: Collection<User> = self.client.database("docuvy").collection("users");
-        let options = mongodb::options::ReplaceOptions::builder().upsert(true).build(); // Build ReplaceOptions
         collection
             .replace_one(
                 doc! { "_id": &user._id }, // Filter

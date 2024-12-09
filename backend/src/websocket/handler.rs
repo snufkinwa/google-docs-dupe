@@ -2,9 +2,7 @@
 
 use crate::websocket::types::WebSocketMessage;
 use axum::extract::ws::{Message, WebSocket};
-use tokio::sync::{broadcast, Mutex};
-use serde_json::Value;
-use std::sync::Arc;
+use tokio::sync::broadcast;
 
 
 pub struct WebSocketHandler {
@@ -49,17 +47,25 @@ impl WebSocketHandler {
                         return true;
                     }
                 };
-
+    
+                if message.doc_id != self.doc_id {
+                    eprintln!(
+                        "Document ID mismatch: expected {}, got {}",
+                        self.doc_id, message.doc_id
+                    );
+                    return true;
+                }
+    
                 match message.type_.as_str() {
                     "init" => {
-                        println!("Initializing document: {}", message.doc_id);
+                        println!("Initializing document: {}", self.doc_id);
                         if let Err(e) = message.content.doc.validate() {
                             eprintln!("Invalid document structure: {}", e);
                         }
                     }
                     "update" => {
                         if let Some(steps) = message.steps {
-                            println!("Processing steps for document: {}", message.doc_id);
+                            println!("Processing steps for document: {}", self.doc_id);
                             for step in steps {
                                 println!("Step: {:?}", step);
                             }
@@ -73,4 +79,5 @@ impl WebSocketHandler {
             _ => true,
         }
     }
+    
 }

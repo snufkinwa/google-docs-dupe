@@ -61,7 +61,10 @@ async fn sync_user(
     axum::extract::Extension(mongo): axum::extract::Extension<Arc<MongoDB>>,
     Json(user_data): Json<types::User>,
 ) -> impl IntoResponse {
-    // Convert types::User to mongodb::User
+    if let Ok(Some(existing_user)) = mongo.get_user(&user_data._id).await {
+        println!("Existing user found: {:?}", existing_user);
+    }
+
     let mongo_user = db::mongodb::User {
         _id: user_data._id,
         email: user_data.email,
@@ -76,16 +79,26 @@ async fn sync_user(
 }
 
 
+
 // MongoDB document sharing handler
 async fn share_document(
     axum::extract::Extension(mongo): axum::extract::Extension<Arc<MongoDB>>,
-    Json(payload): Json<types::ShareRequest>, // Assuming a `ShareRequest` struct is in `types`
+    Json(payload): Json<types::ShareRequest>,
 ) -> impl IntoResponse {
-    match mongo.add_collaborator(&payload.doc_id, &payload.collaborator_id).await {
-        Ok(_) => (axum::http::StatusCode::OK, "Collaborator added successfully").into_response(),
+    // Check if the document exists
+    match mongo.get_document(&payload.doc_id).await {
+        Ok(Some(_)) => {
+            // If document exists, add collaborator
+            match mongo.add_collaborator(&payload.doc_id, &payload.collaborator_id).await {
+                Ok(_) => (axum::http::StatusCode::OK, "Collaborator added successfully").into_response(),
+                Err(e) => (axum::http::StatusCode::INTERNAL_SERVER_ERROR, format!("Error: {}", e)).into_response(),
+            }
+        }
+        Ok(None) => (axum::http::StatusCode::NOT_FOUND, "Document not found").into_response(),
         Err(e) => (axum::http::StatusCode::INTERNAL_SERVER_ERROR, format!("Error: {}", e)).into_response(),
     }
 }
+
 
 // Fallback handler for unknown routes
 async fn handler_404() -> impl IntoResponse {
