@@ -7,9 +7,7 @@ services:
       - "3000:3000"
     volumes:
       - ./frontend:/usr/src/app
-      - ./packages/core:/usr/src/packages/core
-    working_dir: /usr/src/app/frontend/src
-    command: npm run dev
+      - /usr/src/app/node_modules
     environment:
       - NODE_ENV=development
     depends_on:
@@ -23,7 +21,7 @@ services:
       - "8080:8080"
     volumes:
       - ./backend:/usr/src/backend
-    working_dir: /usr/src/backend
-    command: cargo run
+      - /usr/src/backend/target
     environment:
       - RUST_LOG=debug
+    restart: unless-stopped
