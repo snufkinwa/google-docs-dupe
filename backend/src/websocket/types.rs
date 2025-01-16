@@ -8,14 +8,14 @@ pub struct EditorState {
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Doc {
-    #[serde(rename = "type")]
+    #[serde(rename = "type_")]
     pub type_: String,
     pub content: Vec<Node>,
 }
 
 #[derive(Clone, Serialize, Deserialize, Default)]
 pub struct Node {
-    #[serde(rename = "type")]
+    #[serde(rename = "type_")]
     pub type_: String,
     #[serde(skip_serializing_if = "Option::is_none", default)]
     pub attrs: Option<serde_json::Value>,
@@ -62,6 +62,7 @@ pub enum Step {
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct WebSocketMessage {
+    #[serde(rename = "type_")]
     pub type_: String,
     pub doc_id: String,
     pub content: EditorState,

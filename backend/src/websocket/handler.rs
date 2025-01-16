@@ -37,9 +37,12 @@ impl WebSocketHandler {
         }
     }
 
+  
     async fn handle_message(&mut self, msg: Option<Result<Message, axum::Error>>) -> bool {
         match msg {
             Some(Ok(Message::Text(text))) => {
+                println!("Raw WebSocket message: {}", text);
+    
                 let message: WebSocketMessage = match serde_json::from_str(&text) {
                     Ok(msg) => msg,
                     Err(e) => {
@@ -56,28 +59,19 @@ impl WebSocketHandler {
                     return true;
                 }
     
+                // Handle the message logic
                 match message.type_.as_str() {
-                    "init" => {
-                        println!("Initializing document: {}", self.doc_id);
-                        if let Err(e) = message.content.doc.validate() {
-                            eprintln!("Invalid document structure: {}", e);
-                        }
-                    }
-                    "update" => {
-                        if let Some(steps) = message.steps {
-                            println!("Processing steps for document: {}", self.doc_id);
-                            for step in steps {
-                                println!("Step: {:?}", step);
-                            }
-                        }
-                    }
+                    "init" => println!("Initializing document: {}", self.doc_id),
+                    "update" => println!("Updating document: {}", self.doc_id),
                     _ => eprintln!("Unknown message type: {}", message.type_),
                 }
+    
                 true
             }
             None | Some(Err(_)) => false,
             _ => true,
         }
     }
+    
     
 }
