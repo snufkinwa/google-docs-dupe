@@ -46,7 +46,10 @@ const buildKeymap = (schema: Schema) => {
 };
 
 export default defineNuxtPlugin(() => {
-  function createEditor(element: HTMLElement) {
+  function createEditor(
+    element: HTMLElement,
+    dispatchTransaction: (this: EditorView, tr: Transaction) => void
+  ) {
     const state = EditorState.create({
       doc: schema.node("doc", null, [
         schema.node("paragraph", null, [schema.text("Start typing here...")]),
@@ -57,10 +60,7 @@ export default defineNuxtPlugin(() => {
 
     return new EditorView(element, {
       state,
-      dispatchTransaction(this: EditorView, tr: Transaction) {
-        const newState = this.state.apply(tr);
-        this.updateState(newState);
-      },
+      dispatchTransaction,
     });
   }
 

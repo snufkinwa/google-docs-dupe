@@ -6,18 +6,31 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, defineEmits } from "vue";
-import type { EditorView } from "prosemirror-view";
+import { EditorView } from "prosemirror-view";
+import { Transaction } from "prosemirror-state";
 
 const editorRef = ref<HTMLElement | null>(null);
 const editorView = ref<EditorView | null>(null);
 const { $createEditor } = useNuxtApp();
 
-const emit = defineEmits(["editorInitialized"]);
+const emit = defineEmits(["editorInitialized", "transactionDispatched"]);
+
+// Transaction dispatch logic
+const dispatchTransaction = function (this: EditorView, tr: Transaction): void {
+  if (editorView.value) {
+    const newState = editorView.value.state.apply(tr);
+    editorView.value.updateState(newState);
+
+    // Emit the transaction so the parent component can handle updates
+    emit("transactionDispatched", tr);
+  }
+};
 
 onMounted(() => {
   if (editorRef.value) {
-    // Initialize the editor and emit the instance
-    editorView.value = $createEditor(editorRef.value);
+    // Pass the dispatchTransaction function to the plugin
+    editorView.value = $createEditor(editorRef.value, dispatchTransaction);
+
     if (editorView.value) {
       console.log("Editor instance created:", editorView.value);
       emit("editorInitialized", editorView.value);
