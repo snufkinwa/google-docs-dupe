@@ -5,6 +5,8 @@ use std::sync::Arc;
 use std::env;
 use dotenv::dotenv;
 use tokio::sync::broadcast;
+use tower_http::cors::{CorsLayer, Any};
+
 
 mod db;
 mod editor;
@@ -25,13 +27,21 @@ async fn main() {
 
     let (tx, _) = broadcast::channel::<WebSocketMessage>(100);
 
-let app = Router::new()
-    .route("/api/users/sync", post(sync_user))
-    .route("/api/documents/share", post(share_document))
-    .route("/ws/:doc_id", get(handle_websocket))
-    .fallback(handler_404) 
-    .layer(Extension(mongo.clone())) 
-    .layer(Extension(Arc::new(tx.clone())));
+
+    let cors = CorsLayer::new()
+    .allow_origin(Any) 
+    .allow_methods(Any)
+    .allow_headers(Any);
+
+
+    let app = Router::new()
+        .route("/api/users/sync", post(sync_user))
+        .route("/api/documents/share", post(share_document))
+        .route("/ws/:doc_id", get(handle_websocket))
+        .fallback(handler_404) 
+        .layer(Extension(mongo.clone())) 
+        .layer(Extension(Arc::new(tx.clone())))
+        .layer(cors);
 
 
     let addr = "127.0.0.1:8080".parse().unwrap();

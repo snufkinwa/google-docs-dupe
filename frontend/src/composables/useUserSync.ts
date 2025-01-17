@@ -5,11 +5,13 @@ export function useUserSync() {
   const { isSignedIn } = useAuth();
   const { user } = useUser();
 
+  console.log("User data:", user.value);
+
   const syncUserToDb = async () => {
     if (!isSignedIn.value || !user.value) return;
 
     try {
-      await fetch("/api/users/sync", {
+      const response = await fetch("http://127.0.0.1:8080/api/users/sync", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -19,6 +21,11 @@ export function useUserSync() {
           profile_pic: user.value.imageUrl,
         }),
       });
+
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        console.error("Failed to sync user:", errorMessage);
+      }
     } catch (error) {
       console.error("Failed to sync user:", error);
     }
