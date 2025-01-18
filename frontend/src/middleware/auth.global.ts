@@ -5,7 +5,7 @@ export default defineNuxtRouteMiddleware((to) => {
 
   if (isSignedIn.value) {
     const { user } = useUserSync();
-    console.log("User info:", user.value);
+    console.log("User info:", { user });
   }
 
   console.log("Middleware executed for route:", to.path);

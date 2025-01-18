@@ -26,6 +26,7 @@ export default defineNuxtConfig({
     "@nuxt/icon",
   ],
   clerk: {
+    appearance: {},
     publishableKey: process.env.NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
   },
   googleFonts: {

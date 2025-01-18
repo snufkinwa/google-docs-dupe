@@ -5,7 +5,7 @@ export function useUserSync() {
   const { isSignedIn } = useAuth();
   const { user } = useUser();
 
-  console.log("User data:", user.value);
+  console.log("User data:", user);
 
   const syncUserToDb = async () => {
     if (!isSignedIn.value || !user.value) return;
